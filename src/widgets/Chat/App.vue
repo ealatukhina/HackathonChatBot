@@ -71,7 +71,9 @@ export default {
       userIsTyping: false,
       topics: {},
       idQuestion: undefined,
-      idTopic: undefined
+      idTopic: undefined,
+      yesId: undefined,
+      noId: undefined
     };
   },
   created() {
@@ -99,17 +101,21 @@ export default {
           : "";
     },
     onMessageWasSent(message) {
+      this.messageList = [
+        ...this.messageList,
+        Object.assign({}, message, { id: Math.random() })
+      ];
+
       console.log(message);
       let start = this.idQuestion;
       let id = this.idTopic;
       let link = `https://host.j-soft.online/api/history/${id}`;
-
+      let idNext = undefined;
 
       if (message.data.text === "Да") {
-        
         let upload = {
           id: start,
-          answer: message.data.text,
+          answer: message.data.text
         };
         let data = new FormData();
 
@@ -129,14 +135,16 @@ export default {
           })
           .catch(() => console.log("ошибка"));
 
+        setTimeout( _ => {
+          this.send(this.yesId, this.idTopic);
+        }, 400);
       } else if (message.data.text === "Нет") {
+        idNext = this.noId;
 
+        setTimeout( _ => {
+          this.send(this.noId, this.idTopic);
+        }, 400);
       }
-     
-      this.messageList = [
-        ...this.messageList,
-        Object.assign({}, message, { id: Math.random() })
-      ];
     },
     openChat() {
       this.isChatOpen = true;
@@ -202,6 +210,8 @@ export default {
         console.log(message);
         this.idQuestion = start;
         this.idTopic = id;
+        this.yesId = result.yes;
+        this.noId = result.no;
 
         this.messageList = [
           ...this.messageList,
