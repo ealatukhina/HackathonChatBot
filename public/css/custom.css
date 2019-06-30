@@ -1,0 +1,22 @@
+.sc-chat-window[data-v-e73fa8e4] {
+	box-shadow: none !important;
+}
+.sc-user-input {
+	border-radius: 0 !important;
+}
+.chat-wrapper {
+
+}
+.sc-user-input.active {
+	box-shadow: none !important;
+}
+.sc-user-input--text:empty:before {
+	color: #fff !important;
+	font-weight: 500;
+}
+.sc-user-input--button-icon-wrapper[data-v-5007e21b] {
+	display: flex !important;
+}
+.chat__aside_main {
+	background: #f3f3f3;
+}
