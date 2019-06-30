@@ -4,7 +4,7 @@
       <div class="chat__aside_header">
         <img
           class="chat__avatar-icon"
-          src="https://bootdey.com/img/Content/avatar/avatar1.png"
+          src="/img/mihail.png"
           alt="Михаил"
         />
         <div class="chat__aside_header_h1">Михаил</div>
@@ -16,11 +16,7 @@
           @click="send(item.start, item.id, item.topic)"
         >
           <div class="dialog-item__avatar">
-            <img
-              class="chat__avatar-icon"
-              src="https://bootdey.com/img/Content/avatar/avatar1.png"
-              alt="Михаил"
-            />
+            <div class="chat__avatar-icon chat__avatar-icon chat__avatar-icon_aside"> </div>
           </div>
           <div class="dialog-item__main">
             <div class="dialog-item__name">{{item.topic}}</div>

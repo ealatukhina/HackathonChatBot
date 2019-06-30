@@ -61,6 +61,59 @@
     background: var(--ChatAsideHeaderAfter);
   }
 
+  .chat__avatar-icon_aside {
+
+    width: 40px;
+    height:  40px;
+    border-radius: 50%;
+    background: url('/img/triangle.png') no-repeat center/cover;
+
+  }
+
+.aside-dialog-item {
+
+&:nth-child(2n) {
+
+    .chat__avatar-icon_aside {
+
+        background-image: url('/img/romb.png');
+  
+    }
+
+}
+
+&:nth-child(3n) {
+
+    .chat__avatar-icon_aside {
+
+        background-image: url('/img/pentagon.png');
+  
+    }
+
+}
+
+&:nth-child(4n) {
+
+    .chat__avatar-icon_aside {
+
+        background-image: url('/img/kvadro.png');
+  
+    }
+
+}
+
+&:nth-child(5n) {
+
+    .chat__avatar-icon_aside {
+
+        background-image: url('/img/hexagone.png');
+  
+    }
+
+    }
+}
+
+
 .sc-user-input {
 
     background-color: rgb(25, 28, 30) !important;
