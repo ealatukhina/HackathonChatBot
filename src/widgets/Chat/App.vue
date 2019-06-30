@@ -116,7 +116,6 @@ export default {
         Object.assign({}, message, { id: Math.random() })
       ];
 
-      console.log(message);
       let start = this.idQuestion;
       let id = this.idTopic;
       let link = `https://host.j-soft.online/api/history/${id}`;
@@ -126,7 +125,7 @@ export default {
         answer: message.data.text
       };
 
-      if (message.data.text === "Да") {
+      if (message.data.text === "Да" || message.data.text === "Ага" || message.data.text === "да") {
         fetch(link, {
           method: "POST",
           body: JSON.stringify(upload)
@@ -136,12 +135,8 @@ export default {
               return Promise.reject();
             }
             let hasSave = response.json();
-            console.log(hasHave);
           })
-          .then(function(data) {
-            console.log(JSON.stringify(data));
-          })
-          .catch(() => console.log("ошибка"));
+          .then(function(data) {});
 
         if (this.yesId == 0) return "";
 
@@ -150,8 +145,7 @@ export default {
             this.send(this.yesId, this.idTopic);
           }, 400);
         }
-      } 
-      else if (message.data.text === "Нет") {
+      } else if (message.data.text === "Нет" || message.data.text === "нет" || message.data.text === "не-а" || message.data.text === "Не-а") {
         if (this.noId == 0) return "";
         else {
           fetch(link, {
@@ -163,12 +157,8 @@ export default {
                 return Promise.reject();
               }
               let hasSave = response.json();
-              console.log(hasHave);
             })
-            .then(function(data) {
-              console.log(JSON.stringify(data));
-            })
-            .catch(() => console.log("ошибка"));
+            .then(function(data) {});
 
           setTimeout(_ => {
             this.send(this.noId, this.idTopic);
@@ -216,9 +206,13 @@ export default {
       let response = await fetch("https://host.j-soft.online/api/topics");
       let result = await response.json();
       this.topics = result;
-      console.log(result);
+
+      
     },
     async send(start, id, title) {
+
+ 
+
       let response = await fetch(
         `https://host.j-soft.online/api/history/${id}`
       );
@@ -227,7 +221,6 @@ export default {
         this.messageList = result;
       }
 
-      console.log(title);
       if (title) {
         this.participants[0].name = title;
       }
@@ -242,14 +235,12 @@ export default {
       xmlHttp.send(null);
       let answer = xmlHttp.responseText;
       let result = JSON.parse(answer);
-      console.log(result);
       let message = {};
       message.type = "text";
       message.author = "bot";
       message.id = start;
       message.data = JSON.parse(result.object);
 
-      console.log(message);
       this.idQuestion = start;
       this.idTopic = id;
       this.yesId = result.yes;
@@ -258,16 +249,7 @@ export default {
       this.messageList = [
         ...this.messageList,
         Object.assign({}, message, { id })
-      ];
-
-      if (message.link) {
-        let messageField = document.querySelector(".sc-message--content");
-
-        messageField.querySelectorAll(".sc-message");
-
-        let msgContent = messageField.querySelector(".sc-message--text");
-        console.log(msgConten);
-      }
+      ]; 
     }
   },
 
