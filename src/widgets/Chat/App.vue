@@ -10,7 +10,11 @@
         <div class="chat__aside_header_h1">Михаил</div>
       </div>
       <div class="chat__aside_main">
-        <div class="aside-dialog-item" v-for="item in topics" @click="send(item.start, item.id)">
+        <div
+          class="aside-dialog-item"
+          v-for="item in topics"
+          @click="send(item.start, item.id, item.topic)"
+        >
           <div class="dialog-item__avatar">
             <img
               class="chat__avatar-icon"
@@ -56,7 +60,13 @@ export default {
   },
   data() {
     return {
-      participants: chatParticipants,
+      participants: [
+        {
+          id: "0",
+          name: "Выберите, с кем хотите пообщаться!",
+          imageUrl: "https://avatars3.githubusercontent.com/u/1915989?s=230&v=4"
+        }
+      ],
       titleImageUrl:
         "https://a.slack-edge.com/66f9/img/avatars-teams/ava_0001-34.png",
       messageList: [{}],
@@ -111,14 +121,12 @@ export default {
       let id = this.idTopic;
       let link = `https://host.j-soft.online/api/history/${id}`;
       let idNext = undefined;
+      let upload = {
+        id: start,
+        answer: message.data.text
+      };
 
       if (message.data.text === "Да") {
-        let upload = {
-          id: start,
-          answer: message.data.text
-        };
-        let data = new FormData();
-
         fetch(link, {
           method: "POST",
           body: JSON.stringify(upload)
@@ -135,15 +143,37 @@ export default {
           })
           .catch(() => console.log("ошибка"));
 
-        setTimeout( _ => {
-          this.send(this.yesId, this.idTopic);
-        }, 400);
-      } else if (message.data.text === "Нет") {
-        idNext = this.noId;
+        if (this.yesId == 0) return "";
 
-        setTimeout( _ => {
-          this.send(this.noId, this.idTopic);
-        }, 400);
+        {
+          setTimeout(_ => {
+            this.send(this.yesId, this.idTopic);
+          }, 400);
+        }
+      } 
+      else if (message.data.text === "Нет") {
+        if (this.noId == 0) return "";
+        else {
+          fetch(link, {
+            method: "POST",
+            body: JSON.stringify(upload)
+          })
+            .then(response => {
+              if (response.status !== 200) {
+                return Promise.reject();
+              }
+              let hasSave = response.json();
+              console.log(hasHave);
+            })
+            .then(function(data) {
+              console.log(JSON.stringify(data));
+            })
+            .catch(() => console.log("ошибка"));
+
+          setTimeout(_ => {
+            this.send(this.noId, this.idTopic);
+          }, 400);
+        }
       }
     },
     openChat() {
@@ -188,45 +218,55 @@ export default {
       this.topics = result;
       console.log(result);
     },
-    send(start, id) {
-      {
-        var xmlHttp = new XMLHttpRequest();
+    async send(start, id, title) {
+      let response = await fetch(
+        `https://host.j-soft.online/api/history/${id}`
+      );
+      if (response.ok) {
+        let result = await response.json();
+        this.messageList = result;
+      }
 
-        xmlHttp.open(
-          "GET",
-          `https://host.j-soft.online/api/question/${start}`,
-          false
-        ); // false for synchronous request
-        xmlHttp.send(null);
-        let answer = xmlHttp.responseText;
-        let result = JSON.parse(answer);
-        console.log(result);
-        let message = {};
-        message.type = "text";
-        message.author = "bot";
-        message.id = start;
-        message.data = JSON.parse(result.object);
+      console.log(title);
+      if (title) {
+        this.participants[0].name = title;
+      }
 
-        console.log(message);
-        this.idQuestion = start;
-        this.idTopic = id;
-        this.yesId = result.yes;
-        this.noId = result.no;
+      var xmlHttp = new XMLHttpRequest();
 
-        this.messageList = [
-          ...this.messageList,
-          Object.assign({}, message, { id })
-        ];
+      xmlHttp.open(
+        "GET",
+        `https://host.j-soft.online/api/question/${start}`,
+        false
+      ); // false for synchronous request
+      xmlHttp.send(null);
+      let answer = xmlHttp.responseText;
+      let result = JSON.parse(answer);
+      console.log(result);
+      let message = {};
+      message.type = "text";
+      message.author = "bot";
+      message.id = start;
+      message.data = JSON.parse(result.object);
 
-        if (messages.link) {
+      console.log(message);
+      this.idQuestion = start;
+      this.idTopic = id;
+      this.yesId = result.yes;
+      this.noId = result.no;
 
-        let messageField = document.querySelector('.sc-message--content');
+      this.messageList = [
+        ...this.messageList,
+        Object.assign({}, message, { id })
+      ];
 
-        messageField.querySelectorAll('.sc-message');
+      if (message.link) {
+        let messageField = document.querySelector(".sc-message--content");
 
-        let msgContent = messageField.querySelector('.sc-message--text');
-        
-        }
+        messageField.querySelectorAll(".sc-message");
+
+        let msgContent = messageField.querySelector(".sc-message--text");
+        console.log(msgConten);
       }
     }
   },
