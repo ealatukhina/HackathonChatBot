@@ -217,6 +217,16 @@ export default {
           ...this.messageList,
           Object.assign({}, message, { id })
         ];
+
+        if (messages.link) {
+
+        let messageField = document.querySelector('.sc-message--content');
+
+        messageField.querySelectorAll('.sc-message');
+
+        let msgContent = messageField.querySelector('.sc-message--text');
+        
+        }
       }
     }
   },
