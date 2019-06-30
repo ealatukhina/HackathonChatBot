@@ -1,7 +1,31 @@
 <template>
   <div class="chat-wrapper">
-    <topics></topics>
-    <beautiful-chat class="chat" 
+    <div class="chat__aside">
+      <div class="chat__aside_header">
+        <img
+          class="chat__avatar-icon"
+          src="https://bootdey.com/img/Content/avatar/avatar1.png"
+          alt="Михаил"
+        />
+        <div class="chat__aside_header_h1">Михаил</div>
+      </div>
+      <div class="chat__aside_main">
+        <div class="aside-dialog-item" v-for="item in topics" @click="send(item.start, item.id)">
+          <div class="dialog-item__avatar">
+            <img
+              class="chat__avatar-icon"
+              src="https://bootdey.com/img/Content/avatar/avatar1.png"
+              alt="Михаил"
+            />
+          </div>
+          <div class="dialog-item__main">
+            <div class="dialog-item__name">{{item.topic}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <beautiful-chat
+      class="chat"
       :alwaysScrollToBottom="alwaysScrollToBottom"
       :close="closeChat"
       :colors="colors"
@@ -15,19 +39,18 @@
       :showTypingIndicator="showTypingIndicator"
       :titleImageUrl="titleImageUrl"
       @onType="handleOnType"
-    >
-    </beautiful-chat>
+    ></beautiful-chat>
   </div>
 </template>
 
 <script>
-import messageHistory from './messageHistory'
-import chatParticipants from './chatProfiles'
-import availableColors from './colors'
-import topics from './topics'
+import messageHistory from "./messageHistory";
+import chatParticipants from "./chatProfiles";
+import availableColors from "./colors";
+import topics from "./topics";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
     topics
   },
@@ -35,123 +58,173 @@ export default {
     return {
       participants: chatParticipants,
       titleImageUrl:
-        'https://a.slack-edge.com/66f9/img/avatars-teams/ava_0001-34.png',
-      messageList: messageHistory,
+        "https://a.slack-edge.com/66f9/img/avatars-teams/ava_0001-34.png",
+      messageList: [{}],
       newMessagesCount: 0,
       isChatOpen: true,
-      showTypingIndicator: '',
+      showTypingIndicator: "",
       colors: null,
       availableColors,
       chosenColor: null,
       alwaysScrollToBottom: false,
       messageStyling: true,
-      userIsTyping: false
-    }
+      userIsTyping: false,
+      topics: {},
+      idQuestion: undefined,
+      idTopic: undefined
+    };
   },
   created() {
-    this.setColor('blue')
+    this.setColor("blue");
+    this.init();
   },
   methods: {
     sendMessage(text) {
       if (text.length > 0) {
         this.newMessagesCount = this.isChatOpen
           ? this.newMessagesCount
-          : this.newMessagesCount + 1
+          : this.newMessagesCount + 1;
         this.onMessageWasSent({
-          author: 'support',
-          type: 'text',
+          author: "support",
+          type: "text",
           id: Math.random(),
           data: { text }
-        })
+        });
       }
     },
     handleTyping(text) {
       this.showTypingIndicator =
         text.length > 0
           ? this.participants[this.participants.length - 1].id
-          : ''
+          : "";
     },
     onMessageWasSent(message) {
-      this.messageList = [...this.messageList, Object.assign({}, message, {id: Math.random()})]
+      console.log(message);
+      let start = this.idQuestion;
+      let id = this.idTopic;
+      let link = `https://host.j-soft.online/api/history/${id}`;
+
+
+      if (message.data.text === "Да") {
+        
+        let upload = {
+          id: start,
+          answer: message.data.text,
+        };
+        let data = new FormData();
+
+        fetch(link, {
+          method: "POST",
+          body: JSON.stringify(upload)
+        })
+          .then(response => {
+            if (response.status !== 200) {
+              return Promise.reject();
+            }
+            let hasSave = response.json();
+            console.log(hasHave);
+          })
+          .then(function(data) {
+            console.log(JSON.stringify(data));
+          })
+          .catch(() => console.log("ошибка"));
+
+      } else if (message.data.text === "Нет") {
+
+      }
+     
+      this.messageList = [
+        ...this.messageList,
+        Object.assign({}, message, { id: Math.random() })
+      ];
     },
     openChat() {
-      this.isChatOpen = true
-      this.newMessagesCount = 0
+      this.isChatOpen = true;
+      this.newMessagesCount = 0;
     },
     closeChat() {
-      this.isChatOpen = false
+      this.isChatOpen = false;
     },
     setColor(color) {
-      this.colors = this.availableColors[color]
-      this.chosenColor = color
+      this.colors = this.availableColors[color];
+      this.chosenColor = color;
     },
     showStylingInfo() {
-      this.$modal.show('dialog', {
-        title: 'Info',
+      this.$modal.show("dialog", {
+        title: "Info",
         text:
-          'You can use *word* to <strong>boldify</strong>, /word/ to <em>emphasize</em>, _word_ to <u>underline</u>, `code` to <code>write = code;</code>, ~this~ to <del>delete</del> and ^sup^ or ¡sub¡ to write <sup>sup</sup> and <sub>sub</sub>'
-      })
+          "You can use *word* to <strong>boldify</strong>, /word/ to <em>emphasize</em>, _word_ to <u>underline</u>, `code` to <code>write = code;</code>, ~this~ to <del>delete</del> and ^sup^ or ¡sub¡ to write <sup>sup</sup> and <sub>sub</sub>"
+      });
     },
     messageStylingToggled(e) {
-      this.messageStyling = e.target.checked
+      this.messageStyling = e.target.checked;
     },
     handleOnType() {
-      this.$root.$emit('onType')
-      this.userIsTyping = true
+      this.$root.$emit("onType");
+      this.userIsTyping = true;
     },
-    editMessage(message){
-      const m = this.messageList.find(m=>m.id === message.id);
+    editMessage(message) {
+      const m = this.messageList.find(m => m.id === message.id);
       m.isEdited = true;
       m.data.text = message.data.text;
     },
-    like(id){
+    like(id) {
       const m = this.messageList.findIndex(m => m.id === id);
       var msg = this.messageList[m];
       msg.liked = !msg.liked;
       this.$set(this.messageList, m, msg);
+    },
+    async init(context) {
+      let response = await fetch("https://host.j-soft.online/api/topics");
+      let result = await response.json();
+      this.topics = result;
+      console.log(result);
+    },
+    send(start, id) {
+      {
+        var xmlHttp = new XMLHttpRequest();
+
+        xmlHttp.open(
+          "GET",
+          `https://host.j-soft.online/api/question/${start}`,
+          false
+        ); // false for synchronous request
+        xmlHttp.send(null);
+        let answer = xmlHttp.responseText;
+        let result = JSON.parse(answer);
+        console.log(result);
+        let message = {};
+        message.type = "text";
+        message.author = "bot";
+        message.id = start;
+        message.data = JSON.parse(result.object);
+
+        console.log(message);
+        this.idQuestion = start;
+        this.idTopic = id;
+
+        this.messageList = [
+          ...this.messageList,
+          Object.assign({}, message, { id })
+        ];
+      }
     }
   },
+
   computed: {
     linkColor() {
-      return this.chosenColor === 'dark'
+      return this.chosenColor === "dark"
         ? this.colors.sentMessage.text
-        : this.colors.launcher.bg
+        : this.colors.launcher.bg;
     },
     backgroundColor() {
-      return this.chosenColor === 'dark' ? this.colors.messageList.bg : '#fff'
+      return this.chosenColor === "dark" ? this.colors.messageList.bg : "#fff";
     },
-    data() {
-      let id_product = 321;
-let qty_product = 2; 
-// Вынес что бы облегчить чтение так же можно вынести и headers
-let data_body = "id_product=" + id_product + "&qty_product="+ qty_product;  
- 
-/*
-Первым аргументом кладем путь до файла
-на сервере, вторым объект где будут
-свойства method, body здесь у нас данные для
-передачи на сервер, headers заголовок.
-*/
-fetch("ajax_quest.php", { 
-	method: "POST",
-    body: data_body,   
-	headers:{"content-type": "application/x-www-form-urlencoded"} 
-	})
-   
-.then( (response) => {
-        if (response.status !== 200) {           
-			return Promise.reject();
-        }   
-return response.text()
-})
-.then(i => console.log(i))
-.catch(() => console.log('ошибка')); 
+    mounted() {
+      this.messageList.forEach(x => (x.liked = false));
     }
-  },
-  mounted(){
-    this.messageList.forEach(x=>x.liked = false);
   }
-}
+};
 </script>
 
 <style>
