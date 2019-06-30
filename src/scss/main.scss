@@ -11,7 +11,12 @@
 
 @import
     'components/buttons',
-    'components/titles';
+    'components/titles',
+    'components/chat.scss';
 
 @import
     'pages/index';
+
+@import
+    'vendors/style.css',
+    'vendors/bootstrap.min.css';

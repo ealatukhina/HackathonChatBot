@@ -1,6 +1,7 @@
 <template>
-  <div :style="{background: backgroundColor}">
-    <beautiful-chat 
+  <div class="chat-wrapper">
+    <topics></topics>
+    <beautiful-chat class="chat" 
       :alwaysScrollToBottom="alwaysScrollToBottom"
       :close="closeChat"
       :colors="colors"
@@ -11,18 +12,11 @@
       :onMessageWasSent="onMessageWasSent"
       :open="openChat"
       :participants="participants"
-      :showEmoji="true"
       :showTypingIndicator="showTypingIndicator"
       :titleImageUrl="titleImageUrl"
       @onType="handleOnType"
     >
-      <template v-slot:text-message-toolbox="scopedProps">
-        <button v-if="!scopedProps.me && scopedProps.message.type==='text'" @click.prevent="like(scopedProps.message.id)">
-          👍
-        </button>
-      </template>
     </beautiful-chat>
-    <v-dialog/>
   </div>
 </template>
 
@@ -30,11 +24,12 @@
 import messageHistory from './messageHistory'
 import chatParticipants from './chatProfiles'
 import availableColors from './colors'
+import topics from './topics'
 
 export default {
   name: 'app',
   components: {
-
+    topics
   },
   data() {
     return {
@@ -43,7 +38,7 @@ export default {
         'https://a.slack-edge.com/66f9/img/avatars-teams/ava_0001-34.png',
       messageList: messageHistory,
       newMessagesCount: 0,
-      isChatOpen: false,
+      isChatOpen: true,
       showTypingIndicator: '',
       colors: null,
       availableColors,
@@ -124,6 +119,33 @@ export default {
     },
     backgroundColor() {
       return this.chosenColor === 'dark' ? this.colors.messageList.bg : '#fff'
+    },
+    data() {
+      let id_product = 321;
+let qty_product = 2; 
+// Вынес что бы облегчить чтение так же можно вынести и headers
+let data_body = "id_product=" + id_product + "&qty_product="+ qty_product;  
+ 
+/*
+Первым аргументом кладем путь до файла
+на сервере, вторым объект где будут
+свойства method, body здесь у нас данные для
+передачи на сервер, headers заголовок.
+*/
+fetch("ajax_quest.php", { 
+	method: "POST",
+    body: data_body,   
+	headers:{"content-type": "application/x-www-form-urlencoded"} 
+	})
+   
+.then( (response) => {
+        if (response.status !== 200) {           
+			return Promise.reject();
+        }   
+return response.text()
+})
+.then(i => console.log(i))
+.catch(() => console.log('ошибка')); 
     }
   },
   mounted(){
@@ -137,24 +159,19 @@ body {
   padding: 0px;
   margin: 0px;
 }
-
 * {
   font-family: Avenir Next, Helvetica Neue, Helvetica, sans-serif;
 }
-
 .demo-description {
   max-width: 500px;
 }
-
 .demo-description img {
   max-width: 500px;
 }
-
 .demo-test-area {
   width: 300px;
   box-sizing: border-box;
 }
-
 .demo-test-area--text {
   box-sizing: border-box;
   width: 100%;
@@ -173,28 +190,23 @@ body {
   height: 150px;
   margin-bottom: 10px;
 }
-
 .demo-monster-img {
   width: 400px;
   display: block;
   margin: 60px auto;
 }
-
 .text-center {
   text-align: center;
 }
-
 .colors a {
   color: #fff;
   text-decoration: none;
   padding: 4px 10px;
   border-radius: 10px;
 }
-
 .toggle a {
   text-decoration: none;
 }
-
 .messageStyling {
   font-size: small;
 }

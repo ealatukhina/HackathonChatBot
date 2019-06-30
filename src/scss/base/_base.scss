@@ -1,8 +1,18 @@
+.html {
+
+    height: 100%;
+
+  
+
+}
+
 .body {
 
     margin: 0;
     padding: 0;
     font-family: $font-default;
+    height: 100%;
+    background-color: #2e3337;
 
 }
 
@@ -15,6 +25,7 @@ a {
 .main {
 
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -25,6 +36,7 @@ a {
         flex-direction: column;
         width: 100%;
         max-width: 1280px;
+        height: 100%;
 
     }
 
@@ -42,5 +54,6 @@ a {
         }
     }
 }
+
 
 

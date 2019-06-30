@@ -6,7 +6,7 @@ import mutations from './mutations';
 import actions from './actions';
 import Vuex from 'vuex';
 import Vue from 'vue';
-import modules from './modules';
+import modules from './modules/index.js';
 
 Vue.use(Vuex);
 

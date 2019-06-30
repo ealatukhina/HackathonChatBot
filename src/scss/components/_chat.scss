@@ -1,0 +1,69 @@
+.sc-launcher, .sc-header--close-button {
+
+    display: none !important;
+
+}
+
+.chat {
+
+    height: 100%;
+    width: 100%;
+
+}
+
+.chat__aside_main {
+    height: calc(100% - 60px);
+}
+
+.chat-wrapper {
+
+    display: flex;
+    height: 100%;
+
+}
+
+.sc-chat-window {
+
+    position: static !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: none !important;
+    background-color: #333 !important;
+
+}
+
+.sc-header {
+
+    height: 60px;
+    min-height: 60px !important;
+    border-radius: 0 !important;
+    background-color: #333 !important;
+
+}
+
+.sc-message-list {
+
+    background-color: #333 !important;
+
+}
+
+.chat__aside_main::-webkit-scrollbar {
+    width: 2px;
+  }
+  .chat__aside_main::-webkit-scrollbar-track {
+    /*трек*/
+    width: 2px;
+    background: var(--ScrollTrackBg);
+  }
+  .chat__aside_main::-webkit-scrollbar-thumb {
+    /*ползунок*/
+    width: 2px;
+    background: var(--ChatAsideHeaderAfter);
+  }
+
+.sc-user-input {
+
+    background-color: rgb(25, 28, 30) !important;
+    color: #fff !important;
+
+}
